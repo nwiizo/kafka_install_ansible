@@ -1,0 +1,5 @@
+#!/bin/sh
+toilet -t -f mono12 --gay GMP
+toilet -t -f mono9 --gay $(hostname)
+screenfetch -n | grep -v '^$'
+curl -s http://169.254.169.254/latest/dynamic/instance-identity/document/ | egrep -v '(^{$|null,|^}$)' 

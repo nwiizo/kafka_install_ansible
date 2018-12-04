@@ -1,0 +1,14 @@
+---
+- hosts: kafka
+  remote_user: root
+  roles:
+    - init_ssh
+    - init_ansible
+    - init_update
+    - hostname
+    - shell
+    - common_pkgs
+    - zookeeper
+    - kafka
+    - gmopool_kafka-topics
+

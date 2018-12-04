@@ -1,0 +1,5 @@
+- name: 'install python2 for ansible support'
+  apt:
+    name: python-minimal
+    update_cache: yes
+    state: present

@@ -1,0 +1,15 @@
+- name: 'set login message - install banner utils'
+  apt: name={{item}} state=present
+  with_items: [ toilet, screenfetch ]
+- name: 'set login message - add hostname banner'
+  copy: src=00-header-gmo dest=/etc/update-motd.d/ mode=0755
+- name: 'set login message - disable help text'
+  file: path={{item}} mode=0644
+  with_items:
+    - /etc/update-motd.d/10-help-text
+    - /etc/update-motd.d/51-cloudguest
+- name: 'set bash profile'
+  copy: src={{item.src}} dest={{item.dest}} mode={{item.mode}}
+  with_items:
+    - { src: 'Z99-gmo.sh', dest: '/etc/profile.d/', mode: '0755'}
+    - { src: '.profile', dest: '/root/', mode: '0644'}

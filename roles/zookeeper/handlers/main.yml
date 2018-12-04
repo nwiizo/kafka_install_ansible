@@ -1,0 +1,6 @@
+---
+- name: Reload systemd
+  systemd: daemon_reload=yes
+
+- name: Restart zookeeper
+  systemd: name=zookeeper enabled=yes state=restarted

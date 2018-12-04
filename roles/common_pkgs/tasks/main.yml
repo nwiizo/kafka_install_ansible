@@ -1,0 +1,24 @@
+- name: 'install common pkgs'
+  apt: name={{item}} update_cache=yes state=present
+  with_items:
+    - git
+    - zstd
+    - zutils
+    - sysstat
+    - dstat
+    - htop
+    - iotop
+    - iftop
+    - iptraf
+    - ngrep
+    - socat
+    - mtr-tiny
+    - netcat-openbsd
+    - pv
+    - moreutils
+    - psmisc
+    - multitail
+    - jq
+    - inotify-tools
+    - incron
+#   - ...

@@ -1,0 +1,5 @@
+# zk
+zookeeper_brokers: ""
+zookeeper_datadir: "/data/zookeeper"
+kafka_brokers: ""
+kafka_datadir: "/data/kafka"

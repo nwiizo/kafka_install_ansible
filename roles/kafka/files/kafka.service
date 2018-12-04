@@ -1,0 +1,22 @@
+[Unit]
+Description=Apache Kafka server
+Documentation=http://kafka.apache.org
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=kafka
+Group=kafka
+LimitNOFILE=300000
+LimitFSIZE=infinity
+Environment="JMX_PORT=12345"
+Environment="KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.net.preferIPv4Stack=true -Dcom.sun.management.jmxremote.rmi.port=8989"
+
+ExecStart=/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties
+ExecStop=/opt/kafka/bin/kafka-server-stop.sh
+KillMode=process
+SyslogIdentifier=kafka
+
+[Install]
+WantedBy=multi-user.target

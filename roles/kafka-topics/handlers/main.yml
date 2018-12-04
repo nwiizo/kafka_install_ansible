@@ -1,0 +1,6 @@
+---
+- name: Run create-kafka-topics.sh
+  shell: /root/create-kafka-topics.sh
+  args:
+    executable: /bin/bash
+  when: ('zk01') in inventory_hostname and init_kafka | default("false") | match("true")

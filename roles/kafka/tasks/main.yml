@@ -1,0 +1,44 @@
+- name: install jre
+  apt: name=openjdk-8-jre update_cache=yes state=present
+
+- name: add kafka group
+  group: name=kafka system=yes
+
+- name: add kafka user
+  user: name=kafka group=kafka home={{ kafka_datadir }} system=yes shell=/usr/sbin/nologin
+  
+- name: copy kafka bins
+  synchronize: src=/opt/sync/kafka dest=/opt/ copy_links=yes times=no checksum=yes rsync_opts='--exclude=*/config/server.properties'
+
+- name: create kafka data directory
+  file: path={{ kafka_datadir }} state=directory owner=kafka group=kafka
+
+- name: link kafka log directory to /var/log
+  file: path=/opt/kafka/logs state=directory owner=kafka group=kafka
+
+- name: link kafka log directory to /var/log
+  file: src=/opt/kafka/logs dest=/var/log/kafka state=link
+
+- name: put kafka systemd unit file
+  copy: src=kafka.service dest=/etc/systemd/system/
+  notify: Reload systemd
+
+- meta: flush_handlers
+
+- name: put kafka config
+  template: src=server.properties.j2 dest=/opt/kafka/config/server.properties
+  notify: Restart kafka
+
+- meta: flush_handlers
+
+- name: kafka is enabled and running
+  systemd: name=kafka enabled=yes state=started
+
+- name: put logrotate script
+  copy: src=javalog-rotate.sh dest=/usr/local/bin/scripts/
+
+- name: set logrotate cron
+  cron: 
+    name: "kafka javalog rotate"
+    job: "bash /usr/local/bin/scripts/javalog-rotate.sh kafka > /dev/null 2>&1"
+    hour: 1
