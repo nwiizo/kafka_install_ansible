@@ -1,0 +1,49 @@
+- name: install jre
+  apt: name=openjdk-8-jre update_cache=yes state=present
+
+- name: add zookeeper group
+  group: name=zookeeper system=yes
+
+- name: add zookeeper user
+  user: name=zookeeper group=zookeeper home={{ zookeeper_datadir }} system=yes shell=/usr/sbin/nologin
+  
+- name: copy zookeeper bins
+  synchronize: src=/opt/sync/zookeeper dest=/opt/ copy_links=yes times=no checksum=yes rsync_opts='--exclude=*/config/zookeeper.properties'
+
+- name: create zookeeper data directory
+  file: path={{ zookeeper_datadir }} state=directory owner=zookeeper group=zookeeper
+
+- name: link zookeeper log directory to /var/log
+  file: path=/opt/zookeeper/logs state=directory owner=zookeeper group=zookeeper
+
+- name: link zookeeper log directory to /var/log
+  file: src=/opt/zookeeper/logs dest=/var/log/zookeeper state=link
+
+- name: put zookeeper systemd unit file
+  copy: src=zookeeper.service dest=/etc/systemd/system/
+  notify: Reload systemd
+
+- meta: flush_handlers
+
+- name: put zookeeper config
+  template: src=zookeeper.properties.j2 dest=/opt/zookeeper/config/zookeeper.properties
+  notify: Restart zookeeper
+
+- name: put zookeeper myid
+  template: src=myid.j2 dest={{ zookeeper_datadir }}/myid
+  notify: Restart zookeeper
+
+- meta: flush_handlers
+
+- name: zookeeper is enabled and running
+  systemd: name=zookeeper enabled=yes state=started
+
+- name: put logrotate script
+  copy: src=javalog-rotate.sh dest=/usr/local/bin/scripts/
+
+- name: set logrotate cron
+  cron:
+    name: "zookeeper javalog rotate"
+    job: "bash /usr/local/bin/scripts/javalog-rotate.sh zookeeper > /dev/null 2>&1"
+    hour: 1
+    minute: "{{ 59 | random(seed=ec2_id + 'zookeeper') }}"

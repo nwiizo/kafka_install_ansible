@@ -1,0 +1,3 @@
+- name: put create-kafka-topics.sh when init_kafka is true
+  template: src=create-kafka-topics.sh.j2 dest=/root/create-kafka-topics.sh mode=0755
+  notify: Run create-kafka-topics.sh

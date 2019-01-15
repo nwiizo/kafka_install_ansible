@@ -1,0 +1,18 @@
+[Unit]
+Description=Apache Zookeeper server
+Documentation=http://zookeeper.apache.org
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User=zookeeper
+Group=zookeeper
+
+ExecStart=/opt/zookeeper/bin/zookeeper-server-start.sh /opt/zookeeper/config/zookeeper.properties
+ExecStop=/opt/zookeeper/bin/zookeeper-server-stop.sh
+KillMode=process
+SyslogIdentifier=zookeeper
+
+[Install]
+WantedBy=multi-user.target

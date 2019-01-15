@@ -1,0 +1,5 @@
+- name: 'apt update (run only with -e "apt_update=true")'
+  when: apt_update | default("false") | match("true")
+  apt:
+    upgrade: full
+    update_cache: yes
