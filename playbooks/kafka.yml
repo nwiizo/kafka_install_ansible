@@ -10,5 +10,4 @@
     - common_pkgs
     - zookeeper
     - kafka
-    - gmopool_kafka-topics
-
+    - xxxpool_kafka-topics
